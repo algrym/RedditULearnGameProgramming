@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <system additive="true" points="false">
 	<emitter imageName="" name="Explosion" renderType="inherit"
-		useAdditive="true" useOriented="false">
+		useAdditive="false" useOriented="false">
 		<spawnInterval enabled="true" max="10.0" min="5.0" />
 		<spawnCount enabled="true" max="50.0" min="5.0" />
 		<initialLife enabled="true" max="150.0" min="100.0" />
@@ -36,9 +36,23 @@
 			<point x="1.0" y="1.0" />
 		</scaleY>
 		<color>
-			<step b="1.0" g="0.0" offset="0.0" r="0.0" />
-			<step b="0.0" g="1.0" offset="0.1" r="0.0" />
-			<step b="0.0" g="0.0" offset="5.0" r="1.0" />
+			<step r="1.00" g="0.11" b="0.08" offset="0.0" />
+			<step r="0.73" g="0.23" b="0.15" offset="0.20" />
+			<step r="0.82" g="0.34" b="0.17" offset="0.40" />
+			<step r="0.93" g="0.50" b="0.20" offset="0.60" />
+			<step r="0.95" g="0.62" b="0.20" offset="0.70" />
+			<step r="0.98" g="0.79" b="0.27" offset="0.80" />
+			<step r="1.00" g="0.91" b="0.32" offset="0.90" />
 		</color>
 	</emitter>
 </system>
+
+
+<!-- Dark to light, RGB -->
+<!-- 0.48, 0.11, 0.08 -->
+<!-- 0.73, 0.23, 0.15 -->
+<!-- 0.82, 0.34, 0.17 -->
+<!-- 0.93, 0.50, 0.20 -->
+<!-- 0.95, 0.62, 0.20 -->
+<!-- 0.98, 0.79, 0.27 -->
+<!-- 1.00, 0.91, 0.32 -->

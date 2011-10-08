@@ -1,12 +1,19 @@
 package org.toadking.redditu.learngameprogramming;
 
+import java.io.IOException;
+
 import org.newdawn.slick.Animation;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Image;
 import org.newdawn.slick.SlickException;
+import org.newdawn.slick.geom.Shape;
+import org.newdawn.slick.geom.Rectangle;
+import org.newdawn.slick.particles.ConfigurableEmitter;
+import org.newdawn.slick.particles.ParticleIO;
+import org.newdawn.slick.particles.ParticleSystem;
 
-public class GameEntity {
+public class GameEntity implements Collidable {
     private Location2D location;
     final private Animation up, down, left, right;
     private Animation sprite;
@@ -15,6 +22,14 @@ public class GameEntity {
     GameEntityAI ai;
     final private float spriteSpeed = 0.2f;
     private boolean isDone = false;
+    private boolean isDead = false;
+    Rectangle collisionShape;
+    private int scoreValue = 100;
+
+    private ParticleSystem explosionSystem;
+    private ConfigurableEmitter explosionEmitter;
+
+    private int deathClock = 1000;
 
     public GameEntity(final String newMobName, final int newX, final int newY)
 	    throws SlickException {
@@ -35,7 +50,17 @@ public class GameEntity {
 		new Image("Resources/" + mobName + "_rt1" + IMAGEFORMAT),
 		new Image("Resources/" + mobName + "_rt2" + IMAGEFORMAT) };
 
-	int duration = 200;
+	final int duration = 200;
+
+	try {
+	    explosionSystem = ParticleIO
+		    .loadConfiguredSystem("Resources/Fire.xml");
+	    explosionEmitter = (ConfigurableEmitter) explosionSystem
+		    .getEmitter(0);
+	    explosionEmitter.setPosition(location.getX(), location.getY());
+	} catch (IOException e) {
+	    throw new SlickException("Failed to load particle systems", e);
+	}
 
 	up = new Animation(movementUp, duration, false);
 	down = new Animation(movementDown, duration, false);
@@ -43,10 +68,23 @@ public class GameEntity {
 	right = new Animation(movementRight, duration, false);
 
 	sprite = down;
+
+	updateCollisionShape();
     }
 
-    public void draw(GameContainer container, Graphics g) {
+    protected void updateCollisionShape() {
+	collisionShape = new Rectangle(location.getX(), location.getY(),
+		sprite.getWidth(), sprite.getHeight());
+    }
+
+    public void render(GameContainer container, Graphics g) {
 	sprite.draw(location.getX(), location.getY());
+	if (isDead) {
+	    explosionEmitter.setPosition(location.getX()
+		    + (sprite.getWidth() / 2),
+		    location.getY() + sprite.getHeight());
+	    explosionSystem.render();
+	}
     }
 
     public void fixLimits(int width, int height) {
@@ -65,24 +103,28 @@ public class GameEntity {
 	sprite = up;
 	sprite.update(delta);
 	location.moveUp(delta * spriteSpeed);
+	updateCollisionShape();
     }
 
     public void moveDown(int delta) {
 	sprite = down;
 	sprite.update(delta);
 	location.moveDown(delta * spriteSpeed);
+	updateCollisionShape();
     }
 
     public void moveLeft(int delta) {
 	sprite = left;
 	sprite.update(delta);
 	location.moveLeft(delta * spriteSpeed);
+	updateCollisionShape();
     }
 
     public void moveRight(int delta) {
 	sprite = right;
 	sprite.update(delta);
 	location.moveRight(delta * spriteSpeed);
+	updateCollisionShape();
     }
 
     public void moveForward(int delta) {
@@ -97,20 +139,31 @@ public class GameEntity {
     }
 
     public GameProjectile shoot(int delta) throws SlickException {
+	Location2D centerLocation = new Location2D(location.getX()
+		+ (sprite.getWidth() / 2), location.getY()
+		+ (sprite.getHeight() / 2));
+
 	if (sprite == up)
-	    return new GameProjectile(location, Location2D.UP);
+	    return new GameProjectile(centerLocation, Location2D.UP);
 	else if (sprite == down)
-	    return new GameProjectile(location, Location2D.DOWN);
+	    return new GameProjectile(centerLocation, Location2D.DOWN);
 	else if (sprite == left)
-	    return new GameProjectile(location, Location2D.LEFT);
+	    return new GameProjectile(centerLocation, Location2D.LEFT);
 	else if (sprite == right)
-	    return new GameProjectile(location, Location2D.RIGHT);
-	
+	    return new GameProjectile(centerLocation, Location2D.RIGHT);
+
 	return null;
     }
 
-    public void update(int delta) {
-	if (ai != null)
+    public void update(final int delta) {
+	if (isDead) {
+	    deathClock -= delta;
+	    if (deathClock <= 0) {
+		isDone = true;
+		explosionEmitter.wrapUp();
+	    }
+	    explosionSystem.update(delta);
+	} else if (ai != null)
 	    ai.update(delta);
     }
 
@@ -125,5 +178,39 @@ public class GameEntity {
 
     public boolean isDone() {
 	return isDone;
+    }
+
+    @Override
+    public boolean collides(final Collidable other) {
+	return collisionShape.intersects(other.getCollisionShape());
+    }
+
+    @Override
+    public Shape getCollisionShape() {
+	return collisionShape;
+    }
+
+    public void dieInFire() {
+	isDead = true;
+    }
+
+    public void dieInBattle() {
+	isDead = true;
+    }
+
+    public int getScoreValue() {
+	return scoreValue;
+    }
+
+    public void setScoreValue(int scoreValue) {
+	this.scoreValue = scoreValue;
+    }
+
+    public Double distanceTo(GameEntity other) {
+	return location.distanceTo(other.location);
+    }
+
+    public boolean isDead() {
+	return isDead;
     }
 }

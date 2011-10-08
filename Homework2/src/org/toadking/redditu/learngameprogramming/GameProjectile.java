@@ -5,11 +5,13 @@ import java.io.IOException;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.SlickException;
+import org.newdawn.slick.geom.Rectangle;
+import org.newdawn.slick.geom.Shape;
 import org.newdawn.slick.particles.ConfigurableEmitter;
 import org.newdawn.slick.particles.ParticleIO;
 import org.newdawn.slick.particles.ParticleSystem;
 
-public class GameProjectile {
+public class GameProjectile implements Collidable {
     private Location2D location;
     private final Location2D heading;
     private boolean isDone = false;
@@ -17,7 +19,7 @@ public class GameProjectile {
     private ParticleSystem explosionSystem;
     private ConfigurableEmitter explosionEmitter;
 
-    long updateCount = 1000;
+    private Rectangle collisionShape;
 
     public GameProjectile(final Location2D start, final Location2D newHeading)
 	    throws SlickException {
@@ -26,7 +28,7 @@ public class GameProjectile {
 
 	try {
 	    explosionSystem = ParticleIO
-		    .loadConfiguredSystem("Resources/endlessexplosion.xml");
+		    .loadConfiguredSystem("Resources/fireball.xml");
 	    explosionEmitter = (ConfigurableEmitter) explosionSystem
 		    .getEmitter(0);
 	    explosionEmitter.setPosition(location.getX(), location.getY());
@@ -35,23 +37,25 @@ public class GameProjectile {
 	}
     }
 
-    public void draw(GameContainer container, Graphics g) {
+    public void render(GameContainer container, Graphics g) {
 	explosionSystem.render();
     }
 
     public void update(int delta) {
 	location.move(heading, delta);
-	
+
 	explosionEmitter.setPosition(location.getX(), location.getY());
 	explosionSystem.update(delta);
-	
-	updateCount -= delta;
+
+	collisionShape = new Rectangle(location.getX() - 2,
+		location.getY() - 2, 4, 4);
     }
 
     public void fixLimits(int width, int height) {
-	if ((location.getX() < 0) || (location.getY() < 0)
-		|| (location.getX() > width) || (location.getY() > height)
-		|| (updateCount < 0)) {
+	if ((location.getX() < (0 - (0.25 * width)))
+		|| (location.getY() < (0 - (0.25 * height)))
+		|| (location.getX() > (width * 1.25))
+		|| (location.getY() > (height * 1.25))) {
 	    explosionEmitter.wrapUp();
 	    isDone = true;
 	}
@@ -59,5 +63,15 @@ public class GameProjectile {
 
     public boolean isDone() {
 	return isDone;
+    }
+
+    @Override
+    public boolean collides(final Collidable other) {
+	return collisionShape.intersects(other.getCollisionShape());
+    }
+
+    @Override
+    public Shape getCollisionShape() {
+	return collisionShape;
     }
 }

@@ -4,16 +4,16 @@ public class Location2D {
     private int x;
     private int y;
 
-    final static Location2D UP = new Location2D (0, -1);
-    final static Location2D DOWN = new Location2D (0, 1);
-    final static Location2D LEFT = new Location2D (-1, 0);
-    final static Location2D RIGHT = new Location2D (1, 0);
-    
+    final static Location2D UP = new Location2D(0, -1);
+    final static Location2D DOWN = new Location2D(0, 1);
+    final static Location2D LEFT = new Location2D(-1, 0);
+    final static Location2D RIGHT = new Location2D(1, 0);
+
     public Location2D(final Location2D newL2D) {
 	x = newL2D.x;
 	y = newL2D.y;
     }
-    
+
     public Location2D(final float newX, final float newY) {
 	x = Math.round(newX * 100);
 	y = Math.round(newY * 100);
@@ -88,8 +88,13 @@ public class Location2D {
 	x += Math.round(d * 100);
     }
 
-    public void move(Location2D newLocation, final float scale) {
+    public void move(final Location2D newLocation, final float scale) {
 	x += newLocation.x * scale;
 	y += newLocation.y * scale;
+    }
+
+    public Double distanceTo(final Location2D other) {
+	return Math.sqrt(((other.x - x) * (other.x - x))
+		+ ((other.y - y) * (other.y - y)));
     }
 }
