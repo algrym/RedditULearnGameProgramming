@@ -7,6 +7,7 @@ import java.util.Random;
  * 
  */
 public class EasyRand {
+    @SuppressWarnings("unused")
     private static final long serialVersionUID = -1627472285297574973L;
     private final long randSeed;
     private Random rnd;

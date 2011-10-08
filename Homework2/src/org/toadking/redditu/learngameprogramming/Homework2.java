@@ -16,22 +16,24 @@ import org.newdawn.slick.AppGameContainer;
  * 
  */
 public class Homework2 extends BasicGame {
-    private GameEntity player;
+    GameEntity player;
 
     private LinkedList<GameEntity> mobList = new LinkedList<GameEntity>();
     private LinkedList<GameProjectile> shotList = new LinkedList<GameProjectile>();
 
     private GameEntityFactory gef = new GameEntityFactory(this);
 
+    private static final int MINMOBS = 5;
     private static final int MAXMOBS = 10;
     private static final int MAXSHOTS = 10;
 
     private TileBackground grass;
 
-    private long score = 0;
+    private long countSinceSpawn;
+    ScoreKeeper score;
 
     public Homework2() {
-	super("Homework 2");
+	super("Exterminator Wizard - ajw@toadking.org");
 
 	// Create the on-screen UI container for this object
 	try {
@@ -41,6 +43,12 @@ public class Homework2 extends BasicGame {
 	} catch (SlickException e) {
 	    e.printStackTrace();
 	}
+
+	countSinceSpawn = getSpawnTime();
+    }
+
+    private long getSpawnTime() {
+	return GameEntityFactory.rand.getInt(1000, 20000);
     }
 
     @Override
@@ -52,11 +60,12 @@ public class Homework2 extends BasicGame {
     @Override
     public void render(GameContainer container, Graphics g)
 	    throws SlickException {
-	// container.getGraphics().setBackground(background);
 	if (grass == null)
 	    grass = new TileBackground("Resources/grass.png");
-
 	grass.render(container, g);
+
+	if (score == null)
+	    score = new ScoreKeeper(this);
 
 	LinkedList<GameProjectile> tempShotList = new LinkedList<GameProjectile>(
 		shotList);
@@ -72,51 +81,21 @@ public class Homework2 extends BasicGame {
 	LinkedList<GameEntity> tempMobList = new LinkedList<GameEntity>(mobList);
 	for (GameEntity ge : tempMobList) {
 	    if (ge.isDone()) {
-		score += ge.getScoreValue() / (shotList.size() + 1);
 		mobList.remove(ge);
 	    } else
 		ge.render(container, g);
 	}
 
-	if (player.isDead())
-	    g.drawString("GAME OVER!  Final score: " + score, 10,
-		    container.getHeight() - 20);
-	else
-	    g.drawString("Score: " + score, 10, container.getHeight() - 20);
+	score.render(container, g);
 
-	g.drawString("ajw@toadking.org", container.getWidth() - 200,
+	g.drawString("ajw@toadking.org", container.getWidth() - 150,
 		container.getHeight() - 20);
     }
 
     @Override
     public void update(GameContainer container, int delta)
 	    throws SlickException {
-	if (player.isDead())
-	    return;
-
 	Input input = container.getInput();
-	boolean playerMoved = false;
-
-	if (input.isKeyDown(Input.KEY_UP)) {
-	    player.moveUp(delta);
-	    playerMoved = true;
-	} else if (input.isKeyDown(Input.KEY_DOWN)) {
-	    player.moveDown(delta);
-	    playerMoved = true;
-	}
-
-	if (input.isKeyDown(Input.KEY_LEFT)) {
-	    player.moveLeft(delta);
-	    playerMoved = true;
-	} else if (input.isKeyDown(Input.KEY_RIGHT)) {
-	    player.moveRight(delta);
-	    playerMoved = true;
-	}
-
-	// PEW PEW PEW!
-	if (input.isKeyPressed(Input.KEY_SPACE))
-	    if (shotList.size() < MAXSHOTS)
-		shotList.add(player.shoot(delta));
 
 	// Housekeeping
 	if (input.isKeyPressed(Input.KEY_ESCAPE))
@@ -125,13 +104,55 @@ public class Homework2 extends BasicGame {
 	if (input.isKeyPressed(Input.KEY_F11))
 	    container.setFullscreen(!container.isFullscreen());
 
+	score.update(container, delta);
+
+	if (player.isDead())
+	    return;
+
+	// Handle player movement
+	boolean playerMoved = false;
+	if (input.isKeyDown(Input.KEY_W)) {
+	    player.moveUp(delta);
+	    playerMoved = true;
+	} else if (input.isKeyDown(Input.KEY_S)) {
+	    player.moveDown(delta);
+	    playerMoved = true;
+	}
+
+	if (input.isKeyDown(Input.KEY_A)) {
+	    player.moveLeft(delta);
+	    playerMoved = true;
+	} else if (input.isKeyDown(Input.KEY_D)) {
+	    player.moveRight(delta);
+	    playerMoved = true;
+	}
+
+	// PEW PEW PEW!
+	if (shotList.size() < MAXSHOTS) {
+	    if (input.isKeyPressed(Input.KEY_UP)) {
+		shotList.add(player.shootUp(delta));
+	    } else if (input.isKeyPressed(Input.KEY_DOWN)) {
+		shotList.add(player.shootDown(delta));
+	    } else if (input.isKeyPressed(Input.KEY_LEFT)) {
+		shotList.add(player.shootLeft(delta));
+	    } else if (input.isKeyPressed(Input.KEY_RIGHT)) {
+		shotList.add(player.shootRight(delta));
+	    }
+	}
+
 	// Assert player boundaries based on the dimensions of the container
 	if (playerMoved)
 	    player.fixLimits(container.getWidth(), container.getHeight());
 
 	// Add new mobs as necessary
-	while (mobList.size() < MAXMOBS)
-	    mobList.add(gef.getMob(container.getWidth(), container.getHeight()));
+	countSinceSpawn -= delta;
+	if (countSinceSpawn <= 0) {
+	    countSinceSpawn = getSpawnTime();
+	    if (mobList.size() < MAXMOBS)
+		addMob(gef.getMob(container.getWidth(), container.getHeight()));
+	}
+	while (mobList.size() < MINMOBS)
+	    addMob(gef.getMob(container.getWidth(), container.getHeight()));
 
 	// Update all the bullets
 	for (GameProjectile gp : shotList) {
@@ -140,18 +161,22 @@ public class Homework2 extends BasicGame {
 
 	    // check for collisions
 	    for (GameEntity ge : mobList) {
-		if (ge.collides(gp))
+		if (ge.collides(gp) && !ge.isDead()) {
 		    ge.dieInFire();
+		    score.addScore(ge.getScoreValue()
+			    / Math.max(shotList.size(), 1));
+		}
 	    }
 	}
 
 	// Update all the mobs!
-	for (GameEntity ge : mobList) {
+	LinkedList<GameEntity> tempMobList = new LinkedList<GameEntity>(mobList);
+	for (GameEntity ge : tempMobList) {
 	    ge.update(delta);
 	    ge.fixLimits(container.getWidth(), container.getHeight());
 
 	    // check for collisions with the player
-	    if (player.collides(ge))
+	    if (player.collides(ge) && !ge.isDead())
 		player.dieInBattle();
 	}
     }
@@ -163,5 +188,9 @@ public class Homework2 extends BasicGame {
 
     public GameEntity getPlayer() {
 	return player;
+    }
+
+    public void addMob(GameEntity mob) {
+	mobList.add(mob);
     }
 }

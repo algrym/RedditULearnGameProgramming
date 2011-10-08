@@ -88,6 +88,30 @@ public class Location2D {
 	x += Math.round(d * 100);
     }
 
+    public Location2D upSquare (final float d) {
+	Location2D l = new Location2D(this);
+	l.moveUp();
+	return l;
+    }
+    
+    public Location2D downSquare (final float d) {
+	Location2D l = new Location2D(this);
+	l.moveDown();
+	return l;
+    }
+    
+    public Location2D leftSquare (final float d) {
+	Location2D l = new Location2D(this);
+	l.moveLeft();
+	return l;
+    }
+    
+    public Location2D rightSquare (final float d) {
+	Location2D l = new Location2D(this);
+	l.moveRight();
+	return l;
+    }
+    
     public void move(final Location2D newLocation, final float scale) {
 	x += newLocation.x * scale;
 	y += newLocation.y * scale;

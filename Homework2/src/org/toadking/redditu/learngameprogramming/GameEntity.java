@@ -17,10 +17,10 @@ public class GameEntity implements Collidable {
     private Location2D location;
     final private Animation up, down, left, right;
     private Animation sprite;
-    final private String mobName;
-    static final String IMAGEFORMAT = new String(".png");
-    GameEntityAI ai;
-    final private float spriteSpeed = 0.2f;
+    private final String mobName;
+    private static final String IMAGEFORMAT = new String(".png");
+    private GameEntityAI ai;
+    private float spriteSpeed = 0.2f;
     private boolean isDone = false;
     private boolean isDead = false;
     Rectangle collisionShape;
@@ -29,7 +29,7 @@ public class GameEntity implements Collidable {
     private ParticleSystem explosionSystem;
     private ConfigurableEmitter explosionEmitter;
 
-    private int deathClock = 1000;
+    private int deathClock = 500;
 
     public GameEntity(final String newMobName, final int newX, final int newY)
 	    throws SlickException {
@@ -75,28 +75,46 @@ public class GameEntity implements Collidable {
     protected void updateCollisionShape() {
 	collisionShape = new Rectangle(location.getX(), location.getY(),
 		sprite.getWidth(), sprite.getHeight());
+	explosionEmitter.setPosition(location.getX() + (sprite.getWidth() / 2),
+		location.getY() + sprite.getHeight());
     }
 
     public void render(GameContainer container, Graphics g) {
 	sprite.draw(location.getX(), location.getY());
 	if (isDead) {
-	    explosionEmitter.setPosition(location.getX()
-		    + (sprite.getWidth() / 2),
-		    location.getY() + sprite.getHeight());
 	    explosionSystem.render();
 	}
     }
 
     public void fixLimits(int width, int height) {
-	if (location.getX() < 0)
-	    location.setX(0);
-	if (location.getY() < 0)
-	    location.setY(0);
+	// handle things differently if this is a player or a mob
+	if (ai == null) {
+	    // player
+	    if (location.getX() < 0)
+		location.setX(0);
+	    if (location.getY() < 0)
+		location.setY(0);
 
-	if (location.getX() > (width - sprite.getWidth()))
-	    location.setX(width - sprite.getWidth());
-	if (location.getY() > (height - sprite.getHeight()))
-	    location.setY(height - sprite.getHeight());
+	    if (location.getX() > (width - sprite.getWidth()))
+		location.setX(width - sprite.getWidth());
+	    if (location.getY() > (height - sprite.getHeight()))
+		location.setY(height - sprite.getHeight());
+	} else {
+	    // mob
+	    if (location.getX() <= sprite.getWidth()) {
+		location.moveRight();
+	    }
+	    if (location.getY() <= sprite.getHeight()) {
+		location.moveDown();
+	    }
+
+	    if (location.getX() >= (width - (2 * sprite.getWidth()))) {
+		location.moveLeft();
+	    }
+	    if (location.getY() >= (height - (2 * sprite.getHeight()))) {
+		location.moveUp();
+	    }
+	}
     }
 
     public void moveUp(int delta) {
@@ -212,5 +230,74 @@ public class GameEntity implements Collidable {
 
     public boolean isDead() {
 	return isDead;
+    }
+
+    public void setSpeed(float f) {
+	spriteSpeed = f;
+    }
+
+    public Location2D getLocation() {
+	return location;
+    }
+
+    public void setLocation(Location2D location) {
+	this.location = location;
+    }
+
+    public void moveTo(GameEntity other, int delta) {
+	// up, down, left, right
+	double[] distance = { 0, 0, 0, 0 };
+	distance[0] = location.upSquare(delta).distanceTo(other.location);
+	distance[1] = location.downSquare(delta).distanceTo(other.location);
+	distance[2] = location.leftSquare(delta).distanceTo(other.location);
+	distance[3] = location.rightSquare(delta).distanceTo(other.location);
+
+	// find the shortest distance
+	if ((distance[0] < distance[1]) && (distance[0] < distance[2])
+		&& (distance[0] < distance[3]))
+	    moveUp(delta);
+	else if ((distance[1] < distance[0]) && (distance[1] < distance[2])
+		&& (distance[1] < distance[3]))
+	    moveDown(delta);
+	else if ((distance[2] < distance[0]) && (distance[2] < distance[1])
+		&& (distance[2] < distance[3]))
+	    moveLeft(delta);
+	else if ((distance[3] < distance[0]) && (distance[3] < distance[1])
+		&& (distance[3] < distance[2]))
+	    moveRight(delta);
+	else
+	    moveForward(delta);
+    }
+
+    public GameProjectile shootUp(int delta) throws SlickException {
+	Location2D centerLocation = new Location2D(location.getX()
+		+ (sprite.getWidth() / 2), location.getY()
+		+ (sprite.getHeight() / 2));
+
+	return new GameProjectile(centerLocation, Location2D.UP);
+    }
+
+    public GameProjectile shootDown(int delta) throws SlickException {
+	Location2D centerLocation = new Location2D(location.getX()
+		+ (sprite.getWidth() / 2), location.getY()
+		+ (sprite.getHeight() / 2));
+
+	return new GameProjectile(centerLocation, Location2D.DOWN);
+    }
+
+    public GameProjectile shootLeft(int delta) throws SlickException {
+	Location2D centerLocation = new Location2D(location.getX()
+		+ (sprite.getWidth() / 2), location.getY()
+		+ (sprite.getHeight() / 2));
+
+	return new GameProjectile(centerLocation, Location2D.LEFT);
+    }
+
+    public GameProjectile shootRight(int delta) throws SlickException {
+	Location2D centerLocation = new Location2D(location.getX()
+		+ (sprite.getWidth() / 2), location.getY()
+		+ (sprite.getHeight() / 2));
+
+	return new GameProjectile(centerLocation, Location2D.RIGHT);
     }
 }
