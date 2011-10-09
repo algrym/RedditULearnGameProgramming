@@ -18,8 +18,8 @@ import org.newdawn.slick.AppGameContainer;
 public class Homework2 extends BasicGame {
     GameEntity player;
 
-    private LinkedList<GameEntity> mobList = new LinkedList<GameEntity>();
-    private LinkedList<GameProjectile> shotList = new LinkedList<GameProjectile>();
+    private LinkedList<GameEntity> mobList;
+    private LinkedList<GameProjectile> shotList;
 
     private GameEntityFactory gef = new GameEntityFactory(this);
 
@@ -32,6 +32,8 @@ public class Homework2 extends BasicGame {
     private long countSinceSpawn;
     ScoreKeeper score;
 
+    boolean gameRunning = false;
+
     public Homework2() {
 	super("Exterminator Wizard - ajw@toadking.org");
 
@@ -43,8 +45,6 @@ public class Homework2 extends BasicGame {
 	} catch (SlickException e) {
 	    e.printStackTrace();
 	}
-
-	countSinceSpawn = getSpawnTime();
     }
 
     private long getSpawnTime() {
@@ -55,17 +55,18 @@ public class Homework2 extends BasicGame {
     public void init(GameContainer container) throws SlickException {
 	player = new GameEntity("amg1", container.getWidth() / 2,
 		container.getHeight() / 2);
+
+	mobList = new LinkedList<GameEntity>();
+	shotList = new LinkedList<GameProjectile>();
+	countSinceSpawn = getSpawnTime();
+	grass = new TileBackground("Resources/grass.png");
+	score = new ScoreKeeper(this);
     }
 
     @Override
     public void render(GameContainer container, Graphics g)
 	    throws SlickException {
-	if (grass == null)
-	    grass = new TileBackground("Resources/grass.png");
 	grass.render(container, g);
-
-	if (score == null)
-	    score = new ScoreKeeper(this);
 
 	LinkedList<GameProjectile> tempShotList = new LinkedList<GameProjectile>(
 		shotList);
@@ -99,14 +100,19 @@ public class Homework2 extends BasicGame {
 
 	// Housekeeping
 	if (input.isKeyPressed(Input.KEY_ESCAPE))
-	    container.exit();
+	    if (player.isDead() || !gameRunning) {
+		init(container);
+		gameRunning = true;
+		return;
+	    } else
+		container.exit();
 
 	if (input.isKeyPressed(Input.KEY_F11))
 	    container.setFullscreen(!container.isFullscreen());
 
 	score.update(container, delta);
 
-	if (player.isDead())
+	if ((player.isDead()) || !gameRunning)
 	    return;
 
 	// Handle player movement
