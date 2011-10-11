@@ -7,9 +7,10 @@
 			<attribute name="javadoc_location" value="file:/Users/ajw/Dropbox/Development/JAR Files/slick/javadoc/"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry exported="true" kind="lib" path="/Users/ajw/Dropbox/Development/JAR Files/slick/lib/lwjgl.jar"/>
-	<classpathentry exported="true" kind="lib" path="/Users/ajw/Dropbox/Development/JAR Files/slick/lib/natives-linux.jar"/>
-	<classpathentry exported="true" kind="lib" path="/Users/ajw/Dropbox/Development/JAR Files/slick/lib/natives-mac.jar"/>
-	<classpathentry exported="true" kind="lib" path="/Users/ajw/Dropbox/Development/JAR Files/slick/lib/natives-win32.jar"/>
+	<classpathentry exported="true" kind="lib" path="/Users/ajw/Dropbox/Development/JAR Files/slick/lib/lwjgl.jar">
+		<attributes>
+			<attribute name="org.eclipse.jdt.launching.CLASSPATH_ATTR_LIBRARY_PATH_ENTRY" value="/Users/ajw/Dropbox/Development/JAR Files/slick/lib/"/>
+		</attributes>
+	</classpathentry>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
