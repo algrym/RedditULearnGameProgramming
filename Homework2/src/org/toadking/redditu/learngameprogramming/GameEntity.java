@@ -38,23 +38,23 @@ public class GameEntity implements Collidable {
 	ai = null;
 
 	final Image[] movementUp = {
-		new Image("Resources/" + mobName + "_bk1" + IMAGEFORMAT),
-		new Image("Resources/" + mobName + "_bk2" + IMAGEFORMAT) };
+		new Image(mobName + "_bk1" + IMAGEFORMAT),
+		new Image(mobName + "_bk2" + IMAGEFORMAT) };
 	final Image[] movementDown = {
-		new Image("Resources/" + mobName + "_fr1" + IMAGEFORMAT),
-		new Image("Resources/" + mobName + "_fr2" + IMAGEFORMAT) };
+		new Image(mobName + "_fr1" + IMAGEFORMAT),
+		new Image(mobName + "_fr2" + IMAGEFORMAT) };
 	final Image[] movementLeft = {
-		new Image("Resources/" + mobName + "_lf1" + IMAGEFORMAT),
-		new Image("Resources/" + mobName + "_lf2" + IMAGEFORMAT) };
+		new Image(mobName + "_lf1" + IMAGEFORMAT),
+		new Image(mobName + "_lf2" + IMAGEFORMAT) };
 	final Image[] movementRight = {
-		new Image("Resources/" + mobName + "_rt1" + IMAGEFORMAT),
-		new Image("Resources/" + mobName + "_rt2" + IMAGEFORMAT) };
+		new Image(mobName + "_rt1" + IMAGEFORMAT),
+		new Image(mobName + "_rt2" + IMAGEFORMAT) };
 
 	final int duration = 200;
 
 	try {
 	    explosionSystem = ParticleIO
-		    .loadConfiguredSystem("Resources/Fire.xml");
+		    .loadConfiguredSystem("Fire.xml");
 	    explosionEmitter = (ConfigurableEmitter) explosionSystem
 		    .getEmitter(0);
 	    explosionEmitter.setPosition(location.getX(), location.getY());

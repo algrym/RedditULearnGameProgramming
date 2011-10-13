@@ -59,7 +59,7 @@ public class Homework2 extends BasicGame {
 	mobList = new LinkedList<GameEntity>();
 	shotList = new LinkedList<GameProjectile>();
 	countSinceSpawn = getSpawnTime();
-	grass = new TileBackground("Resources/grass.png");
+	grass = new TileBackground("grass.png");
 	score = new ScoreKeeper(this);
     }
 

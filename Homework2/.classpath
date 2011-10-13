@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="src" path="Resources"/>
 	<classpathentry exported="true" kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry exported="true" kind="lib" path="/Users/ajw/Dropbox/Development/JAR Files/slick/lib/slick.jar" sourcepath="/Users/ajw/Dropbox/Development/JAR Files/slick/src">
 		<attributes>

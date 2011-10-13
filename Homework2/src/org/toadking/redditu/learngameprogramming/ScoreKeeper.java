@@ -19,9 +19,9 @@ public class ScoreKeeper {
 
     public ScoreKeeper(Homework2 newHW2) throws SlickException {
 	hw2 = newHW2;
-	font = new AngelCodeFont("Resources/hiero.fnt", "Resources/hiero.png",
+	font = new AngelCodeFont("hiero.fnt", "hiero.png",
 		true);
-	titleScreen = new Image("Resources/Exterminator-Wizard-title.png");
+	titleScreen = new Image("Exterminator-Wizard-title.png");
     }
 
     public void addScore(int i) {
