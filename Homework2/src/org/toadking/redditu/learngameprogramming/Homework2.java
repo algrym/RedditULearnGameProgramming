@@ -1,5 +1,7 @@
 package org.toadking.redditu.learngameprogramming;
 
+import java.net.URL;
+import java.net.URLClassLoader;
 import java.util.LinkedList;
 
 import org.newdawn.slick.BasicGame;
@@ -27,6 +29,8 @@ public class Homework2 extends BasicGame {
     private static final int MAXMOBS = 10;
     private static final int MAXSHOTS = 10;
 
+    public static final String RSCPREFIX = "Rscs/";
+    
     private TileBackground grass;
 
     private long countSinceSpawn;
@@ -59,7 +63,7 @@ public class Homework2 extends BasicGame {
 	mobList = new LinkedList<GameEntity>();
 	shotList = new LinkedList<GameProjectile>();
 	countSinceSpawn = getSpawnTime();
-	grass = new TileBackground("grass.png");
+	grass = new TileBackground(RSCPREFIX + "grass.png");
 	score = new ScoreKeeper(this);
     }
 
@@ -187,7 +191,23 @@ public class Homework2 extends BasicGame {
 	}
     }
 
+    public static void printClassPath() {
+	// Get the System Classloader
+	ClassLoader sysClassLoader = ClassLoader.getSystemClassLoader();
+
+	// Get the URLs
+	URL[] urls = ((URLClassLoader) sysClassLoader).getURLs();
+
+	System.err.println("Classpath = {");
+	for (int i = 0; i < urls.length; i++) {
+	    System.err.println("  " + urls[i].getFile());
+	}
+	System.err.println("}");
+    }
+    
     public static void main(String[] args) {
+	printClassPath();
+	
 	// Create a new instance of this object, and put it to work
 	new Homework2();
     }

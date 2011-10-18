@@ -18,7 +18,7 @@ public class GameEntity implements Collidable {
     final private Animation up, down, left, right;
     private Animation sprite;
     private final String mobName;
-    private static final String IMAGEFORMAT = new String(".png");
+    private static final String IMAGEFORMAT = ".png";
     private GameEntityAI ai;
     private float spriteSpeed = 0.2f;
     private boolean isDone = false;
@@ -38,23 +38,23 @@ public class GameEntity implements Collidable {
 	ai = null;
 
 	final Image[] movementUp = {
-		new Image(mobName + "_bk1" + IMAGEFORMAT),
-		new Image(mobName + "_bk2" + IMAGEFORMAT) };
+		new Image(Homework2.RSCPREFIX + mobName + "_bk1" + IMAGEFORMAT),
+		new Image(Homework2.RSCPREFIX + mobName + "_bk2" + IMAGEFORMAT) };
 	final Image[] movementDown = {
-		new Image(mobName + "_fr1" + IMAGEFORMAT),
-		new Image(mobName + "_fr2" + IMAGEFORMAT) };
+		new Image(Homework2.RSCPREFIX + mobName + "_fr1" + IMAGEFORMAT),
+		new Image(Homework2.RSCPREFIX + mobName + "_fr2" + IMAGEFORMAT) };
 	final Image[] movementLeft = {
-		new Image(mobName + "_lf1" + IMAGEFORMAT),
-		new Image(mobName + "_lf2" + IMAGEFORMAT) };
+		new Image(Homework2.RSCPREFIX + mobName + "_lf1" + IMAGEFORMAT),
+		new Image(Homework2.RSCPREFIX + mobName + "_lf2" + IMAGEFORMAT) };
 	final Image[] movementRight = {
-		new Image(mobName + "_rt1" + IMAGEFORMAT),
-		new Image(mobName + "_rt2" + IMAGEFORMAT) };
+		new Image(Homework2.RSCPREFIX + mobName + "_rt1" + IMAGEFORMAT),
+		new Image(Homework2.RSCPREFIX + mobName + "_rt2" + IMAGEFORMAT) };
 
 	final int duration = 200;
 
 	try {
 	    explosionSystem = ParticleIO
-		    .loadConfiguredSystem("Fire.xml");
+		    .loadConfiguredSystem(Homework2.RSCPREFIX + "Fire.xml");
 	    explosionEmitter = (ConfigurableEmitter) explosionSystem
 		    .getEmitter(0);
 	    explosionEmitter.setPosition(location.getX(), location.getY());

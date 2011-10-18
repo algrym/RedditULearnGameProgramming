@@ -6,6 +6,7 @@ import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Image;
 import org.newdawn.slick.SlickException;
 
+
 public class ScoreKeeper {
     private long score = 0;
     private int toAdd = 0;
@@ -17,11 +18,24 @@ public class ScoreKeeper {
     /** The font we're going to use to render */
     private AngelCodeFont font;
 
-    public ScoreKeeper(Homework2 newHW2) throws SlickException {
+    public ScoreKeeper(Homework2 newHW2) {
 	hw2 = newHW2;
-	font = new AngelCodeFont("hiero.fnt", "hiero.png",
-		true);
-	titleScreen = new Image("Exterminator-Wizard-title.png");
+	
+	try {
+	    font = new AngelCodeFont(Homework2.RSCPREFIX + "hiero.fnt",
+		    Homework2.RSCPREFIX + "hiero.png", true);
+	} catch (SlickException e) {
+	    System.err.println("Could not load AngelCodeFonts");
+	    e.printStackTrace();
+	}
+	
+	try {
+	    titleScreen = new Image(Homework2.RSCPREFIX
+		    + "Exterminator-Wizard-title.png");
+	} catch (SlickException e) {
+	    System.err.println("Could not load title PNG");
+	    e.printStackTrace();
+	}
     }
 
     public void addScore(int i) {

@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="MacRoman" standalone="no"?>
+<jardesc>
+    <jar path="/Users/ajw/Desktop/ExterminatorWizardPre.jar"/>
+    <options buildIfNeeded="true" compress="true" descriptionLocation="/Homework2/ExterminatorWizard.jardesc" exportErrors="true" exportWarnings="true" includeDirectoryEntries="true" overwrite="false" saveDescription="true" storeRefactorings="false" useSourceFolders="false"/>
+    <storedRefactorings deprecationInfo="true" structuralOnly="false"/>
+    <selectedProjects/>
+    <manifest generateManifest="true" mainClassHandleIdentifier="=Homework2/src&lt;org.toadking.redditu.learngameprogramming{Homework2.java[Homework2" manifestLocation="/Homework2/Manifest.txt" manifestVersion="1.0" reuseManifest="false" saveManifest="false" usesManifest="true">
+        <sealing sealJar="false">
+            <packagesToSeal/>
+            <packagesToUnSeal/>
+        </sealing>
+    </manifest>
+    <selectedElements exportClassFiles="true" exportJavaFiles="false" exportOutputFolder="false">
+        <javaElement handleIdentifier="=Homework2/Resources"/>
+        <javaElement handleIdentifier="=Homework2/src"/>
+    </selectedElements>
+</jardesc>

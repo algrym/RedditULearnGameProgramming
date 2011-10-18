@@ -28,7 +28,7 @@ public class GameProjectile implements Collidable {
 
 	try {
 	    explosionSystem = ParticleIO
-		    .loadConfiguredSystem("Resources/fireball.xml");
+		    .loadConfiguredSystem(Homework2.RSCPREFIX + "fireball.xml");
 	    explosionEmitter = (ConfigurableEmitter) explosionSystem
 		    .getEmitter(0);
 	    explosionEmitter.setPosition(location.getX(), location.getY());
